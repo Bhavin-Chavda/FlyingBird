@@ -1,4 +1,8 @@
-package com.example.FlyingBird.Millionaire;
+package com.example.FlyingBird.service;
+
+import com.example.FlyingBird.dto.BacktestResults;
+import com.example.FlyingBird.dto.TradeDetails;
+import com.example.FlyingBird.interfaces.ReportGenerator;
 
 import java.io.FileWriter;
 import java.io.IOException;

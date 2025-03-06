@@ -1,4 +1,4 @@
-package com.example.FlyingBird.Millionaire;
+package com.example.FlyingBird.dto;
 
 public enum CROSSTYPE {
     BULLISH,BEARISH;

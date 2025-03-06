@@ -1,4 +1,7 @@
-package com.example.FlyingBird.Millionaire;
+package com.example.FlyingBird.service;
+
+import com.example.FlyingBird.dto.Candle;
+import com.example.FlyingBird.interfaces.IndicatorCalculator;
 
 import java.util.List;
 

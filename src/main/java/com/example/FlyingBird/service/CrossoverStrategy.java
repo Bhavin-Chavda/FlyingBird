@@ -1,4 +1,9 @@
-package com.example.FlyingBird.Millionaire;
+package com.example.FlyingBird.service;
+
+import com.example.FlyingBird.dto.BacktestResults;
+import com.example.FlyingBird.dto.Candle;
+import com.example.FlyingBird.dto.TradeDetails;
+import com.example.FlyingBird.interfaces.Strategy;
 
 import java.util.ArrayList;
 import java.util.List;

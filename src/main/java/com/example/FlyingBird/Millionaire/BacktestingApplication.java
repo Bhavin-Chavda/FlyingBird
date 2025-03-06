@@ -1,5 +1,13 @@
 package com.example.FlyingBird.Millionaire;
 
+import com.example.FlyingBird.dto.BacktestConfig;
+import com.example.FlyingBird.dto.Candle;
+import com.example.FlyingBird.interfaces.DataFetcher;
+import com.example.FlyingBird.interfaces.IndicatorCalculator;
+import com.example.FlyingBird.service.BinanceDataFetcher;
+import com.example.FlyingBird.service.EMAIndicatorCalculator;
+import com.example.FlyingBird.service.UtilityServices;
+
 import java.util.List;
 
 public class BacktestingApplication  {
@@ -13,7 +21,7 @@ public class BacktestingApplication  {
                 "BTCUSDT",
                 "15m",
                 "2022-01-01",
-                "2025-03-03",
+                "2025-03-06",
                 10,
                 2.0,
                 "backtest_report_final_java.csv"

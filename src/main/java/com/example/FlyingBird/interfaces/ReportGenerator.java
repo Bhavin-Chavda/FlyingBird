@@ -1,4 +1,6 @@
-package com.example.FlyingBird.Millionaire;
+package com.example.FlyingBird.interfaces;
+
+import com.example.FlyingBird.dto.BacktestResults;
 
 import java.io.IOException;
 

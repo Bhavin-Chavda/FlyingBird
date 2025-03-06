@@ -1,4 +1,7 @@
-package com.example.FlyingBird.Millionaire;
+package com.example.FlyingBird.service;
+
+import com.example.FlyingBird.dto.CROSSTYPE;
+import com.example.FlyingBird.dto.Candle;
 
 import java.util.List;
 

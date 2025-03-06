@@ -1,5 +1,7 @@
-package com.example.FlyingBird.Millionaire;
+package com.example.FlyingBird.service;
 
+import com.example.FlyingBird.dto.Candle;
+import com.example.FlyingBird.interfaces.DataFetcher;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -24,7 +26,7 @@ public class BinanceDataFetcher implements DataFetcher {
 
         // Convert to ZonedDateTime with proper end time
         ZonedDateTime startZdt = startLocalDate.atStartOfDay(ZoneId.of("Asia/Kolkata"));
-        ZonedDateTime endZdt = endLocalDate.atTime(LocalTime.of(23, 59, 59)).atZone(ZoneId.of("Asia/Kolkata"));
+        ZonedDateTime endZdt = endLocalDate.atTime(LocalTime.MAX).atZone(ZoneId.of("Asia/Kolkata"));
 
         // Convert to UTC epoch milliseconds
         long startTimestamp = startZdt.toInstant().toEpochMilli();
@@ -51,7 +53,7 @@ public class BinanceDataFetcher implements DataFetcher {
                     ObjectMapper mapper = new ObjectMapper();
                     ArrayNode data = (ArrayNode) mapper.readTree(response.getEntity().getContent());
 
-                    if (data.size() == 0) break; // Stop if no data is returned
+                    if (data.isEmpty()) break; // Stop if no data is returned
 
                     long lastTimestamp = -1;
                     for (JsonNode candleData : data) {
