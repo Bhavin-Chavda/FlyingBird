@@ -22,19 +22,25 @@ public class BinanceDataFetcher implements DataFetcher {
         LocalDate startLocalDate = LocalDate.parse(startDate, dateFormatter);
         LocalDate endLocalDate = LocalDate.parse(endDate, dateFormatter);
 
-        // Create ZonedDateTime with time zone and time components
+        // Convert to ZonedDateTime with proper end time
         ZonedDateTime startZdt = startLocalDate.atStartOfDay(ZoneId.of("Asia/Kolkata"));
-        ZonedDateTime endZdt = endLocalDate.atTime(LocalTime.MAX).atZone(ZoneId.of("Asia/Kolkata"));
+        ZonedDateTime endZdt = endLocalDate.atTime(LocalTime.of(23, 59, 59)).atZone(ZoneId.of("Asia/Kolkata"));
 
         // Convert to UTC epoch milliseconds
         long startTimestamp = startZdt.toInstant().toEpochMilli();
         long endTimestamp = endZdt.toInstant().toEpochMilli();
 
+        System.out.println("Fetching data from: " + startZdt + " to " + endZdt);
+        System.out.println("Start Timestamp: " + startTimestamp);
+        System.out.println("End Timestamp: " + endTimestamp);
+        System.out.println("Current Time (Millis): " + System.currentTimeMillis());
+
         List<Candle> candles = new ArrayList<>();
         long currentStart = startTimestamp;
 
         try (CloseableHttpClient client = HttpClients.createDefault()) {
-            while (currentStart <= endTimestamp) {
+            while (currentStart < endTimestamp) {  // Changed from <= to <
+
                 String url = String.format(
                         "https://api.binance.com/api/v3/klines?symbol=%s&interval=%s&limit=1000&startTime=%d",
                         symbol, interval, currentStart
@@ -45,22 +51,16 @@ public class BinanceDataFetcher implements DataFetcher {
                     ObjectMapper mapper = new ObjectMapper();
                     ArrayNode data = (ArrayNode) mapper.readTree(response.getEntity().getContent());
 
-                    if (data.size() == 0) break;
+                    if (data.size() == 0) break; // Stop if no data is returned
 
                     long lastTimestamp = -1;
                     for (JsonNode candleData : data) {
-//                        System.out.println(candleData);
                         long timestamp = candleData.get(0).longValue();
-
-
-
-
 
                         ZonedDateTime zdt = ZonedDateTime.ofInstant(
                                 Instant.ofEpochMilli(timestamp),
                                 ZoneId.of("UTC")
                         ).withZoneSameInstant(ZoneId.of("Asia/Kolkata"));
-//                        System.out.println(zdt+" "+candleData.get(1)+" "+candleData.get(2)+" "+candleData.get(3)+" "+candleData.get(4)+" "+candleData.get(5)+" ");
 
                         // Round to 2 decimal places
                         double open = candleData.get(1).asDouble();
@@ -69,9 +69,15 @@ public class BinanceDataFetcher implements DataFetcher {
                         double close = candleData.get(4).asDouble();
                         double volume = candleData.get(5).asDouble();
 
-//                        System.out.println(open+" "+high+" "+low+" "+close+" "+volume+" ");
+                        Candle candle = new Candle(zdt, open, high, low, close, volume);
 
-                        candles.add(new Candle(zdt, open, high, low, close, volume));
+                        // Stop if Binance returns data beyond the expected endDate
+                        if (zdt.isAfter(endZdt)) {
+                            System.out.println("Stopping: Last fetched candle exceeds end date. " + zdt);
+                            return candles;
+                        }
+
+                        candles.add(candle);
                         lastTimestamp = timestamp;
                     }
 
